@@ -7,7 +7,7 @@ using namespace std;
 
 class MetaData {
 public:
-	string code;
+	char code;
 	string desc;
 	int cycles;
 	int time;
