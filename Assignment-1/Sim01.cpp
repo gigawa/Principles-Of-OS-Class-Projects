@@ -15,7 +15,6 @@ void readConfig(char * argv);
 void readMeta(string metafile);
 void printConfig();
 void printMeta();
-int metaLength;
 
 int main(int argc, char * argv[]) {
 	try {
@@ -29,7 +28,9 @@ int main(int argc, char * argv[]) {
 		}
 	}
 	catch(invalid_argument & e) {
-		cerr << e.what() << endl;
+		printConfig();
+		printMeta();
+		cerr << endl << e.what() << endl;
 		return 1;
 	}
 
@@ -37,7 +38,12 @@ int main(int argc, char * argv[]) {
 }
 
 void readConfig(char * argv) {
-	string line;
+	string line = argv;
+	size_t extension = line.rfind(".");
+	line = line.substr(extension+1);
+	if(line != "conf") {
+		throw invalid_argument("Incorrect file extension for Config file");
+	}
 	fstream fin(argv);
 	if(!fin) {
 		throw invalid_argument("Config file cannot be opened");
@@ -89,11 +95,16 @@ void readConfig(char * argv) {
 }
 
 void readMeta(string metafile) {
+	string line;
+	size_t extension = metafile.rfind(".");
+	line = metafile.substr(extension+1);
+	if(line != "mdf") {
+		throw invalid_argument("Incorrect file extension for Meta-Data file");
+	}
 	fstream fin(metafile);
 	if(!fin) {
 		throw invalid_argument("Meta-Data file cannot be opened");
 	}
-	string line;
 	int currMeta = 0;
 	int configCycle;
 	getline(fin, line);
@@ -104,6 +115,10 @@ void readMeta(string metafile) {
 				fin >> tempMeta.code;
 				if(tempMeta.code != 'S' && tempMeta.code != 'A' && tempMeta.code != 'P' && tempMeta.code != 'I' && tempMeta.code != 'O' && tempMeta.code != 'M') {
 					fin >> tempMeta.code;
+					if(tempMeta.code != 'S' && tempMeta.code != 'A' && tempMeta.code != 'P' && tempMeta.code != 'I' && tempMeta.code != 'O' && tempMeta.code != 'M') {
+						fin.close();
+						throw invalid_argument("Invalid or missing meta-data code");
+					}
 					getline(fin, line, '(');
 				} else {
 					char tempChar;
@@ -112,7 +127,16 @@ void readMeta(string metafile) {
 				}
 				fin >> ws;
 				getline(fin, tempMeta.desc, ')');
-				fin >> tempMeta.cycles;
+				if(!(fin >> tempMeta.cycles))
+				{
+					fin.close();
+					throw invalid_argument("Missing number of cycles in meta-data");
+				}
+				if(tempMeta.cycles < 0) {
+					fin.close();
+					throw invalid_argument("Invalid number of cycles in meta-data");
+				}
+
 				if(tempMeta.desc == "run") {
 					configCycle = config.processor;
 				}else if(tempMeta.desc == "monitor") {
@@ -129,13 +153,17 @@ void readMeta(string metafile) {
 					configCycle = config.mouse;
 				}else if(tempMeta.desc == "speaker") {
 					configCycle = config.speaker;
+				}else if(tempMeta.desc == "start" || tempMeta.desc == "end") {
+					configCycle = 0;
+				}else {
+					fin.close();
+					throw invalid_argument("Invalid or missing descriptor in meta-data");
 				}
 				tempMeta.time = (tempMeta.cycles * configCycle);
 				meta.push_back(tempMeta);
 				currMeta++;
 			}
 		}
-	metaLength = currMeta;
 	fin.close();
 }
 
@@ -170,7 +198,7 @@ void printConfig() {
 void printMeta() {
 	if(config.log == "Log to Both" || config.log == "Log to Monitor") {
 		cout << "Meta-Data Metrics" << endl;
-		for(int i = 0; i < metaLength; i++) {
+		for(int i = 0; i < meta.size(); i++) {
 			if(meta[i].code != 'S' && meta[i].code != 'A') {
 				cout << meta[i].code << "(" << meta[i].desc << ")" << meta[i].cycles << " - " << meta[i].time <<endl;
 			}
@@ -181,7 +209,7 @@ void printMeta() {
 		ofstream fout;
 		fout.open(config.logFilePath, ofstream::out | ofstream::app);
 		fout << "Meta-Data Metrics" << endl;
-		for(int i = 0; i < metaLength; i++) {
+		for(int i = 0; i < meta.size(); i++) {
 			if(meta[i].code != 'S' && meta[i].code != 'A') {
 				fout << meta[i].code << "(" << meta[i].desc << ")" << meta[i].cycles << " - " << meta[i].time <<endl;
 			}
