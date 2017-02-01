@@ -33,7 +33,7 @@ int main(int argc, char * argv[]) {
 	catch(invalid_argument & e) {
 		config.print();
 		printMeta();
-		cerr << endl << e.what() << endl;
+		cerr << endl << "ERROR: " << e.what() << endl;
 		return 1;
 	}
 
@@ -57,16 +57,20 @@ void readMeta(string metafile) {
 		throw invalid_argument("Meta-Data file cannot be opened");
 	}
 
-	int currMeta = 0;
 	int configCycle;
+
+	//resets line
+	line = "";
+
 	getline(fin, line);
+
+	//tempMeta used to temporarily store data until added to vector
 	MetaData tempMeta;
 
 	//checks for start of meta-data file
 	if(line == "Start Program Meta-Data Code:") {
 		//checks for end
 		while(!(tempMeta.desc == "end" && tempMeta.code == 'S')) {
-			meta.resize(currMeta);
 			fin >> tempMeta.code;
 
 			//checks if the meta-data code has been read in
@@ -123,8 +127,11 @@ void readMeta(string metafile) {
 			}
 			tempMeta.time = (tempMeta.cycles * configCycle);
 			meta.push_back(tempMeta);
-			currMeta++;
 		}
+	//checks for empty file if start is not encountered
+	} else if(line.empty()) {
+		fin.close();
+		throw invalid_argument("The Meta-Data file is empty");
 	}
 	fin.close();
 }

@@ -6,8 +6,5 @@ Sim01 : Sim01.cpp ConfigData.o
 ConfigData.o : ConfigData.cpp ConfigData.h
 	g++ -c -std=c++11 ConfigData.cpp
 
-MetaData.o : MetaData.cpp MetaData.h
-	g++ -c -std=c++11 MetaData.cpp
-
 clean:
-	\rm *.o Sim01 *.gch
+	\rm *.o Sim01

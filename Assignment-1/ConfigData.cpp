@@ -20,8 +20,13 @@ void ConfigData::read(char * filename) {
 	//opens file if it can be opened
 	fstream fin(filename);
 	if(!fin) {
+		fin.close();
 		throw invalid_argument("Config file cannot be opened");
 	}
+	fin >> ws;
+
+	//resets line then reads in first line of file
+	line = "";
 	getline(fin, line);
 
 	//checks for start of configuration file
@@ -67,6 +72,10 @@ void ConfigData::read(char * filename) {
 				fin >> logFilePath;
 			}
 		}
+	//if start is not encountered it checks if the file is empty
+	} else if(line.empty()) {
+		fin.close();
+		throw invalid_argument("The Config file is empty");
 	}
 	fin.close();
 }
@@ -82,7 +91,13 @@ void ConfigData::print() {
 		cout << "Keyboard = " << keyboard << " ms/cycle" << endl;
 		cout << "Memory = " << memory << " ms/cycle" << endl;
 		cout << "Mouse = " << mouse << " ms/cycle" << endl;
-		cout << "Speaker = " << speaker << " ms/cycle" << endl << endl;
+		cout << "Speaker = " << speaker << " ms/cycle" << endl;
+		cout << "Logged to: monitor";
+		if(log == "Log to Both") {
+			cout << " and " << logFilePath << endl << endl;
+		} else {
+			cout << endl << endl;
+		}
 	}
 
 	//logs to the file specified
@@ -98,5 +113,8 @@ void ConfigData::print() {
 		fout << "Memory = " << memory << " ms/cycle" << endl;
 		fout << "Mouse = " << mouse << " ms/cycle" << endl;
 		fout << "Speaker = " << speaker << " ms/cycle" << endl << endl;
+		if(log == "Log to File") {
+			cout << "Logged to: " << logFilePath << endl;
+		}
 	}
 }
