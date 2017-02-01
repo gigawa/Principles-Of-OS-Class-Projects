@@ -7,6 +7,9 @@ using namespace std;
 
 class MetaData {
 public:
+	MetaData * read(char * filename);
+	void print(bool monitor, bool file);
+
 	char code;
 	string desc;
 	int cycles;

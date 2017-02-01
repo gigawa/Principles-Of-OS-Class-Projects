@@ -7,6 +7,9 @@ using namespace std;
 
 class ConfigData {
 public:
+	void read(char * filename);
+	void print();
+
 	float version;
 	string filePath;
 	int processor;

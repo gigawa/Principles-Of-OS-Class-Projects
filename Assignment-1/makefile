@@ -1,7 +1,13 @@
 all : Sim01
 
-Sim01 : Sim01.cpp
-	g++ -std=c++11 Sim01.cpp -o Sim01
+Sim01 : Sim01.cpp ConfigData.o
+	g++ -std=c++11 Sim01.cpp ConfigData.o -o Sim01
+
+ConfigData.o : ConfigData.cpp ConfigData.h
+	g++ -c -std=c++11 ConfigData.cpp
+
+MetaData.o : MetaData.cpp MetaData.h
+	g++ -c -std=c++11 MetaData.cpp
 
 clean:
 	\rm *.o Sim01 *.gch
