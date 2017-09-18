@@ -1,0 +1,8 @@
+The scheduling algorithm to use is determined starting at line 53.
+FIFO scheduling is at line 79
+PS Scheduling is at line 87
+SJF Scheduling is at line 127
+Each process is executed starting at line 163
+Delays are handled starting at line 426
+Reading in the meta data starts at line 462
+Memory allocation is done starting at line 613

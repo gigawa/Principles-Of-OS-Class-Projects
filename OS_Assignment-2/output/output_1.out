@@ -1,0 +1,96 @@
+0.000002 - Simulator Program Starting
+0.000257 - OS: preparing process 1
+0.000460 - OS: preparing process 2
+0.000732 - OS: starting process 1
+0.000839 - allocating memory
+0.420955 - memory allocated at 0x365bee88
+0.421187 - start processing action
+0.461262 - end processing action
+0.461478 - start hard drive input
+1.162082 - end hard drive input
+1.162224 - start printer output
+6.162384 - end printer output
+6.162621 - start processing action
+6.252691 - end processing action
+6.252828 - start processing action
+6.342846 - end processing action
+6.343000 - start keyboard input
+11.343148 - end keyboard input
+11.343265 - start processing action
+11.483288 - end processing action
+11.483472 - start hard drive output
+11.933725 - end hard drive output
+11.933896 - allocating memory
+12.074021 - memory allocated at 0x1c8f5241
+12.074228 - start mouse input
+12.254631 - end mouse input
+12.254817 - start hard drive output
+12.605023 - end hard drive output
+12.605174 - start processing action
+12.685255 - end processing action
+12.685462 - start hard drive input
+13.285631 - end hard drive input
+13.285750 - start printer output
+19.286053 - end printer output
+19.286193 - start processing action
+19.396267 - end processing action
+19.396461 - start processing action
+19.406519 - end processing action
+19.406640 - start printer output
+21.906987 - end printer output
+21.907150 - start monitor output
+22.032311 - end monitor output
+22.032456 - start speaker output
+22.052740 - end speaker output
+22.052894 - start processing action
+22.162949 - end processing action
+22.163169 - start processing action
+22.303285 - end processing action
+22.303455 - OS: removing process 1
+22.303483 - OS: starting process 2
+22.303562 - allocating memory
+22.723640 - memory allocated at 0x158f4026
+22.723779 - start processing action
+22.763796 - end processing action
+22.763932 - start hard drive input
+23.464097 - end hard drive input
+23.464265 - start printer output
+28.464429 - end printer output
+28.464695 - start processing action
+28.554780 - end processing action
+28.554947 - start processing action
+28.644971 - end processing action
+28.645127 - start keyboard input
+33.645304 - end keyboard input
+33.645446 - start processing action
+33.785475 - end processing action
+33.785582 - start hard drive output
+34.235708 - end hard drive output
+34.235836 - allocating memory
+34.375867 - memory allocated at 0x3bac7d3d
+34.376028 - start mouse input
+34.556424 - end mouse input
+34.556619 - start hard drive output
+34.906783 - end hard drive output
+34.906893 - start processing action
+34.986947 - end processing action
+34.987062 - start hard drive input
+35.587437 - end hard drive input
+35.587695 - start printer output
+41.587972 - end printer output
+41.588080 - start processing action
+41.698096 - end processing action
+41.698215 - start processing action
+41.708235 - end processing action
+41.708298 - start printer output
+44.208456 - end printer output
+44.208600 - start monitor output
+44.333737 - end monitor output
+44.333920 - start speaker output
+44.354344 - end speaker output
+44.354490 - start processing action
+44.464576 - end processing action
+44.464879 - start processing action
+44.604960 - end processing action
+44.605106 - OS: removing process 2
+44.605129 - Simulator Program Ending

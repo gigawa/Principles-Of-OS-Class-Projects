@@ -3,8 +3,12 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <unistd.h>
+#include <ctime>
+#include <pthread.h>
 #include "ConfigData.h"
 #include "MetaData.h"
+#include "MemoryFunction.h"
 
 using namespace std;
 
@@ -14,8 +18,12 @@ ConfigData config;
 //stores each meta-data
 vector<MetaData> meta;
 
+int currProcess = 0;
+
 void readMeta(string metafile);
 void printMeta();
+void executeProcess();
+void *delay(void* time);
 
 int main(int argc, char * argv[]) {
 	try {
@@ -23,8 +31,9 @@ int main(int argc, char * argv[]) {
 		if(argc == 2) {
 			config.read(argv[1]);
 			readMeta(config.filePath);
-			config.print();
-			printMeta();
+			//config.print();
+			//printMeta();
+			executeProcess();
 		} else {
 			throw invalid_argument("No config file specified.");
 		}
@@ -38,6 +47,75 @@ int main(int argc, char * argv[]) {
 	}
 
 	return 0;
+}
+
+void executeProcess() {
+	float start;
+	float stop;
+	int size = meta.size();
+
+	start = clock();
+	for(int i = 0; i < size; i++) {
+		if(meta[i].code == 'I' || meta[i].code == 'O') {
+			stop = clock();
+			if(meta[i].code == 'I') {
+				cout << (stop-start)/1000 << " - " << "start " << meta[i].desc << " input" << endl;
+			}else {
+				cout << (stop-start)/1000 << " - " << "start " << meta[i].desc << " output" << endl;
+			}
+			pthread_attr_t attr;
+			pthread_attr_init (&attr);
+			pthread_t tid;
+			pthread_create(&tid, &attr, &delay, (void*) &meta[i].time);
+			pthread_join(tid, NULL);
+			stop = clock();
+			if(meta[i].code == 'I') {
+				cout << (stop-start)/1000 << " - " << "end " << meta[i].desc << " input" << endl;
+			}else {
+				cout << (stop-start)/1000 << " - " << "end " << meta[i].desc << " output" << endl;
+			}
+		}else if(meta[i].code == 'P' || meta[i].code == 'M'){
+			stop = clock();
+			if(meta[i].desc == "run") {
+				cout << (stop-start)/1000 << " - " << "start processing action" << endl;
+				usleep(meta[i].time);
+				stop = clock();
+				cout << (stop-start)/1000 << " - " << "end processing action" << endl;
+			} else if(meta[i].desc == "block") {
+				cout << (stop-start)/1000 << " - " << "start memory blocking" << endl;
+				usleep(meta[i].time);
+				stop = clock();
+				cout << (stop-start)/1000 << " - " << "end memory blocking" << endl;
+			} else if(meta[i].desc == "allocate") {
+				cout << (stop-start)/1000 << " - " << "allocating memory" << endl;
+				usleep(meta[i].time);
+				stop = clock();
+				cout << (stop-start)/1000 << " - " << "memory allocated at " << endl;
+			}
+		}else {
+			stop = clock();
+			if(meta[i].desc == "start") {
+				if(meta[i].code == 'A') {
+					cout << (stop-start)/1000 << " - " << "OS: starting process " << currProcess<< endl;
+				} else {
+					cout << (stop-start)/1000 << " - " << "Simulator Program Starting" << endl;
+				}
+			} else {
+				if(meta[i].code == 'A') {
+					cout << (stop-start)/1000 << " - " << "OS: removing process " << currProcess<< endl;
+				} else {
+					cout << (stop-start)/1000 << " - " << "Simulator Program Ending" << endl;
+				}
+			}
+		}
+	}
+}
+
+void *delay(void * time) {
+	int * delayTime;
+	delayTime = (int*)time;
+	usleep(*delayTime);
+	pthread_exit(NULL);
 }
 
 //reads in the meta-data file
@@ -119,9 +197,11 @@ void readMeta(string metafile) {
 				configCycle = config.mouse;
 			}else if(tempMeta.desc == "speaker") {
 				configCycle = config.speaker;
-			}else if(tempMeta.desc == "start" || tempMeta.desc == "end") {
+			}else if(tempMeta.desc == "start") {
 				configCycle = 0;
-			}else {
+			}else if(tempMeta.desc == "end"{
+				configCycle = 0;
+			}else
 				fin.close();
 				throw invalid_argument("Invalid or missing descriptor in meta-data");
 			}
